@@ -12,7 +12,7 @@ jobs:
       - image: circleci/ruby:2.6-rc
     steps:
       - checkout
-      - run: echo "World: Hello"
+      - run: echo "World says Hello"
       - run: sleep 5
 workflows:
   version: 2
