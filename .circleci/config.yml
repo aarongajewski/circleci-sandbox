@@ -30,7 +30,6 @@ jobs:
           at: workspace
 
       - run: |
-          # this will fail intentionally, we'll use SSH to debug and fix
           if [[ $(cat workspace/echo-output) == "Testing Workspaces" ]]; then
             echo "It worked!";
           else
