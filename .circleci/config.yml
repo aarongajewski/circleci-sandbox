@@ -63,7 +63,11 @@ workflows:
       - test2:
           requires:
             - hold
+      - hold2:
+          type: approval
+          requires:
+           - test1
+           - test2
       - deploy:
           requires:
-            - test1
-            - test2
+            - hold2
