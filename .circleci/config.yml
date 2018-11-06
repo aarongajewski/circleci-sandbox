@@ -59,10 +59,10 @@ workflows:
            - build
       - test1:
           requires:
-            - build
+            - hold
       - test2:
           requires:
-            - build
+            - hold
       - deploy:
           requires:
             - test1
