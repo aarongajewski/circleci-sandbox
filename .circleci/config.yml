@@ -53,12 +53,23 @@ workflows:
   build_and_test:
     jobs:
       - build
+      - hold:
+          type: approval
+          requires:
+           - build
       - test1:
           requires:
+            - hold
             - build
       - test2:
           requires:
+            - hold
             - build
+      - hold:
+          type: approval
+          requires:
+           - test1
+           - test2
       - deploy:
           requires:
             - test1
