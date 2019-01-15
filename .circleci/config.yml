@@ -51,7 +51,7 @@ jobs:
     docker:
       - image: circleci/ruby:2.6-rc
     steps:
-      - run: apt-get install openvpn
+      - run: sudo apt-get install openvpn
           
 workflows:
   version: 2
