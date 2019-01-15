@@ -48,8 +48,7 @@ jobs:
           echo "Deploying message!"
           cat workspace/echo-output
   test-job:
-    build:
-      machine: true
+    machine: true
     steps:
       - run: sudo apt-get install openvpn
           
