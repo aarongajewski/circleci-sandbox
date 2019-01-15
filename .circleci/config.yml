@@ -69,7 +69,7 @@ workflows:
   build_and_test:
     jobs:
        - job-to-connect-to-nexus
-       - job-for-downstream-tasks
+       - job-for-downstream-tasks:
            requires:
              - job-to-connect-to-nexus
 #      - build
