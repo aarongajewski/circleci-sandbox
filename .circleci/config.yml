@@ -48,8 +48,8 @@ jobs:
           echo "Deploying message!"
           cat workspace/echo-output
   test-job:
-    docker:
-      - image: circleci/ruby:2.6-rc
+    build:
+      machine: true
     steps:
       - run: sudo apt-get install openvpn
           
