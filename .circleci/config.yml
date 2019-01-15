@@ -47,10 +47,22 @@ jobs:
       - run: |
           echo "Deploying message!"
           cat workspace/echo-output
-  test-job:
+          
+  job-to-connect-to-nexus:
     machine: true
     steps:
-      - run: sudo apt-get install openvpn
+      - run: echo "insert logic to connect to VPN here"
+#      - persist_to_workspace:
+#          # Must be an absolute path, or relative path from working_directory
+#          root: workspace
+#          # Must be relative path from root
+#          paths:
+#            - echo-output  
+  job-for-downstream-tasks:
+    docker:
+      - image: circleci/ruby:2.6-rc
+    steps:
+      - run: echo "grab resources from workspace, do stuff"
           
 workflows:
   version: 2
