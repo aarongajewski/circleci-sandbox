@@ -47,27 +47,33 @@ jobs:
       - run: |
           echo "Deploying message!"
           cat workspace/echo-output
-         
+  test-job:
+    docker:
+      - image: circleci/ruby:2.6-rc
+    steps:
+      - run: apt-get install openvpn
+          
 workflows:
   version: 2
   build_and_test:
     jobs:
-      - build
-      - hold:
-          type: approval
-          requires:
-           - build
-      - test1:
-          requires:
-            - hold
-      - test2:
-          requires:
-            - hold
-      - hold2:
-          type: approval
-          requires:
-           - test1
-           - test2
-      - deploy:
-          requires:
-            - hold2
+       - test-job
+#      - build
+#      - hold:
+#          type: approval
+#          requires:
+#           - build
+#      - test1:
+#          requires:
+#            - hold
+#      - test2:
+#          requires:
+#            - hold
+#      - hold2:
+#          type: approval
+#          requires:
+#           - test1
+#           - test2
+#      - deploy:
+#          requires:
+#            - hold2
