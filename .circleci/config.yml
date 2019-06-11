@@ -2,7 +2,7 @@
 version: 2.1 
  
 orbs:
-  common: eddiewebb/common_tasks@x.y.z
+  common: eddiewebb/common_tasks@0.1.0
  
 workflows:
   basic:
