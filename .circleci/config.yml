@@ -49,9 +49,10 @@ jobs:
           cat workspace/echo-output
           
   job-to-connect-to-nexus:
-    machine: true
+    machine:
+      image: ubuntu-1604:201903-01
     steps:
-      - run: echo "insert logic to connect to VPN here"
+      - run: go version
 #      - persist_to_workspace:
 #          # Must be an absolute path, or relative path from working_directory
 #          root: workspace
@@ -69,9 +70,6 @@ workflows:
   build_and_test:
     jobs:
        - job-to-connect-to-nexus
-       - job-for-downstream-tasks:
-           requires:
-             - job-to-connect-to-nexus
 #      - build
 #      - hold:
 #          type: approval
