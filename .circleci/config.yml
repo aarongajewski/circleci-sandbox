@@ -50,7 +50,7 @@ jobs:
           
   job-to-connect-to-nexus:
     machine:
-      image: ubuntu-1604:201903-01
+        true 
     steps:
       - run: go version
 #      - persist_to_workspace:
