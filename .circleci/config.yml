@@ -1,91 +1,29 @@
 version: 2
 jobs:
-  build:
-    docker:
-      - image: circleci/ruby:2.6-rc
+  test-vpn:
+    machine: true
     steps:
-      - run: mkdir -p workspace
-      - run: echo "Testing Workspaces" > workspace/echo-output
-      - persist_to_workspace:
-          # Must be an absolute path, or relative path from working_directory
-          root: workspace
-          # Must be relative path from root
-          paths:
-            - echo-output    
-  test1:
-    docker:
-      - image: circleci/ruby:2.6-rc
-    steps:
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: workspace
-
-      - run: cat workspace/echo-output
-  test2:
-    docker:
-      - image: circleci/ruby:2.6-rc
-    steps:
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: workspace
-
-      - run: |
-          if [[ $(cat workspace/echo-output) == "Testing Workspaces" ]]; then
-            echo "It worked!";
-          else
-            echo "Nope!"; exit 1
-          fi   
-
-  deploy:
-    docker:
-      - image: circleci/ruby:2.6-rc
-    steps:
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: workspace
-
-      - run: |
-          echo "Deploying message!"
-          cat workspace/echo-output
-          
-  job-to-connect-to-nexus:
-    machine:
-        true 
-    steps:
-      - run: go version
-#      - persist_to_workspace:
-#          # Must be an absolute path, or relative path from working_directory
-#          root: workspace
-#          # Must be relative path from root
-#          paths:
-#            - echo-output  
-  job-for-downstream-tasks:
-    docker:
-      - image: circleci/ruby:2.6-rc
-    steps:
-      - run: echo "grab resources from workspace, do stuff"
-          
+    - run:
+        name: Install OpenVPN
+        command: sudo apt-get install --upgrade openvpn
+    - run:
+        name: Init VPN
+        command: "echo $VPN_CONFIG | base64 --decode >> config.ovpn \nprintf \"$VPN_USER\\\
+          n$VPN_PASSWORD\\n\" >> vpn.login\n"
+    - run:
+        name: Connect to VPN
+        command: |
+          sudo openvpn --config config.ovpn --auth-user-pass vpn.login > openvpn.log 2>&1 &
+          sudo /bin/bash -c 'echo "nameserver 10.255.0.2" > /run/resolvconf/resolv.conf'
+          while [ -n "$(ip addr show tun0 2>&1 > /dev/null)" ]; do
+            sleep 0.1;
+          done
+    - run:
+        name: Do stuff in our infrastructure
+        command: dig app.payfit.tech
 workflows:
   version: 2
-  build_and_test:
+  build-and-release:
     jobs:
-       - job-to-connect-to-nexus
-#      - build
-#      - hold:
-#          type: approval
-#          requires:
-#           - build
-#      - test1:
-#          requires:
-#            - hold
-#      - test2:
-#          requires:
-#            - hold
-#      - hold2:
-#          type: approval
-#          requires:
-#           - test1
-#           - test2
-#      - deploy:
-#          requires:
-#            - hold2
+    - test-vpn:
+        context: GLOBAL_ORG
