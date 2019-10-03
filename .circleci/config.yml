@@ -1,91 +1,53 @@
 version: 2
 jobs:
   build:
+    working_directory: ~/mern-starter
+    # The primary container is an instance of the first image listed. The job's commands run in this container.
     docker:
-      - image: circleci/ruby:2.6-rc
+      - image: circleci/node:4.8.2-jessie
+    # The secondary container is an instance of the second listed image which is run in a common network where ports exposed on the primary container are available on localhost.
+      - image: mongo:3.4.4-jessie
     steps:
-      - run: mkdir -p workspace
-      - run: echo "Testing Workspaces" > workspace/echo-output
-      - persist_to_workspace:
-          # Must be an absolute path, or relative path from working_directory
-          root: workspace
-          # Must be relative path from root
+      - checkout
+      - run:
+          name: Update npm
+          command: 'sudo npm install -g npm@latest'
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Install npm wee
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
           paths:
-            - echo-output    
-  test1:
+            - node_modules
+  test:
     docker:
-      - image: circleci/ruby:2.6-rc
+      - image: circleci/node:4.8.2-jessie
+      - image: mongo:3.4.4-jessie
     steps:
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: workspace
+      - checkout
+      - run:
+          name: Test
+          command: npm test
+      - run:
+          name: Generate code coverage
+          command: './node_modules/.bin/nyc report --reporter=text-lcov'
+      - store_artifacts:
+          path: test-results.xml
+          prefix: tests
+      - store_artifacts:
+          path: coverage
+          prefix: coverage
 
-      - run: cat workspace/echo-output
-  test2:
-    docker:
-      - image: circleci/ruby:2.6-rc
-    steps:
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: workspace
-
-      - run: |
-          if [[ $(cat workspace/echo-output) == "Testing Workspaces" ]]; then
-            echo "It worked!";
-          else
-            echo "Nope!"; exit 1
-          fi   
-
-  deploy:
-    docker:
-      - image: circleci/ruby:2.6-rc
-    steps:
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: workspace
-
-      - run: |
-          echo "Deploying message!"
-          cat workspace/echo-output
-          
-  job-to-connect-to-nexus:
-    machine:
-        true 
-    steps:
-      - run: go version
-#      - persist_to_workspace:
-#          # Must be an absolute path, or relative path from working_directory
-#          root: workspace
-#          # Must be relative path from root
-#          paths:
-#            - echo-output  
-  job-for-downstream-tasks:
-    docker:
-      - image: circleci/ruby:2.6-rc
-    steps:
-      - run: echo "grab resources from workspace, do stuff"
-          
 workflows:
   version: 2
   build_and_test:
     jobs:
-       - job-to-connect-to-nexus
-#      - build
-#      - hold:
-#          type: approval
-#          requires:
-#           - build
-#      - test1:
-#          requires:
-#            - hold
-#      - test2:
-#          requires:
-#            - hold
-#      - hold2:
-#          type: approval
-#          requires:
-#           - test1
-#           - test2
-#      - deploy:
-#          requires:
-#            - hold2
+      - build
+      - test:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
