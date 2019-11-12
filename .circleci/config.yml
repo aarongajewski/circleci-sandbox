@@ -1,13 +1,19 @@
-
-version: 2.1 
- 
-orbs:
-  common: eddiewebb/common_tasks@0.1.0
- 
+version: 2.1
+jobs:
+  bar:
+    docker:
+      - image: ubuntu:latest
+    parallelism: 4  
+    steps:
+      - checkout
+      - run:
+          command: echo "building"
+      - run:
+          command: echo "testing"
 workflows:
-  basic:
+  build:
     jobs:
-      - common/common_task:
-          task-name: demo-task
-          pre-steps:
-           - run: echo \"export SOME_VAR=value\" >> $BASH_ENV
+      - bar:
+          post-steps:
+            - run:
+                command: echo "upload artifact to s3"
