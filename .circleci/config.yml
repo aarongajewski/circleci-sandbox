@@ -8,10 +8,7 @@ jobs:
     steps:
     - checkout
     - run: echo $GCLOUD_SERVICE_KEY
-    - gcp-kms/gcr-auth:
-        gcloud-service-key: $GCLOUD_SERVICE_KEY
-        google-compute-zone: $GOOGLE_COMPUTE_ZONE
-        google-project-id: $GOOGLE_PROJECT_ID
+    - gcp-kms/gcr-auth
     - gcp-kms/get-decrypt:
         ciphertext-file: $CIPHERTEXT_FILE
         plaintext-file: $PLAINTEXT_FILE
