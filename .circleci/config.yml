@@ -7,6 +7,7 @@ jobs:
       - image: circleci/openjdk:11-jdk
     steps:
     - checkout
+    - run: echo $GCLOUD_SERVICE_KEY
     - gcp-kms/gcr-auth:
         gcloud-service-key: $GCLOUD_SERVICE_KEY
         google-compute-zone: $GOOGLE_COMPUTE_ZONE
