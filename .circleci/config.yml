@@ -9,14 +9,8 @@ jobs:
     - checkout
     - run: echo $GCLOUD_SERVICE_KEY
     - gcp-kms/gcr-auth
-    - gcp-kms/get-decrypt:
-        ciphertext-file: $CIPHERTEXT_FILE
-        plaintext-file: $PLAINTEXT_FILE
-        location: $LOCATION
-        keyring: $KEYRING
-        key: $KEY
-        bucket: $BUCKET
-        object-path: $OBJECT_PATH
+    - gcp-kms/get-decrypt
+   
 workflows:
   sample-workflow:
     jobs:
