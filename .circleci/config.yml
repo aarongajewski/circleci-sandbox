@@ -10,7 +10,9 @@ jobs:
     - run: echo $GCLOUD_SERVICE_KEY
     - gcp-kms/gcr-auth
     - gcp-kms/get-decrypt
-   
+        ciphertext-file: "example file name to decipher"
+        plaintext-file: "example file name to store decipered file"
+        object-path: "example gcs object path"
 workflows:
   sample-workflow:
     jobs:
