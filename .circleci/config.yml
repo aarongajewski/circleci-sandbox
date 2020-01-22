@@ -1,15 +1,26 @@
 version: 2.1
+orbs:
+  gcp-kms: carecloud/gcp-kms@0.0.1
 jobs:
-  bar:
+  build:
     docker:
       - image: circleci/openjdk:11-jdk
     steps:
-      - checkout
-      - run:
-          command: |
-            public_ip_address=$(wget -qO- http://checkip.amazonaws.com)
-            echo "the public ip address is $public_ip_address"
+    - checkout
+    - gcp-kms/gcr-auth:
+        gcloud-service-key: $GCLOUD_SERVICE_KEY
+        google-compute-zone: $GOOGLE_COMPUTE_ZONE
+        google-project-id: $GOOGLE_PROJECT_ID
+    - gcp-kms/get-decrypt:
+        ciphertext-file: $CIPHERTEXT_FILE
+        plaintext-file: $PLAINTEXT_FILE
+        location: $LOCATION
+        keyring: $KEYRING
+        key: $KEY
+        bucket: $BUCKET
+        object-path: $OBJECT_PATH
 workflows:
-  build:
+  get-decrypt:
     jobs:
-      - bar
+      - build:
+          context: myContext
