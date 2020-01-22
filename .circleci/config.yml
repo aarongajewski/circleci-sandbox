@@ -14,7 +14,7 @@ jobs:
         plaintext-file: "example file name to store decipered file"
         object-path: "example gcs object path"
 workflows:
-  sample-workflow:
+  example-workflow:
     jobs:
       - build:
           context: myContext
