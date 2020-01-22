@@ -20,7 +20,7 @@ jobs:
         bucket: $BUCKET
         object-path: $OBJECT_PATH
 workflows:
-  get-decrypt:
+  sample-workflow:
     jobs:
       - build:
           context: myContext
