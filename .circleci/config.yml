@@ -11,7 +11,7 @@ jobs:
     - gcp-kms/get-decrypt:
         ciphertext-file: "mysecret.txt.encrypted"
         plaintext-file: "mysecret.txt.decrypted"
-        object-path: ""
+        object-path: "mysecret.txt.encrypted"
 workflows:
   example-workflow:
     jobs:
