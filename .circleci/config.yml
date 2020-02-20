@@ -8,11 +8,15 @@ jobs:
     steps:
     - checkout
     - gcp-kms/gcr-auth
-    - gcp-kms/get-decrypt:
-        ciphertext-file: "mysecret.txt.encrypted"
-        plaintext-file: "mysecret.txt.decrypted"
-        object-path: "mysecret.txt.encrypted"
-        location: "us"
+    - run:
+        command: |
+          gsutil cp gs://$GOOGLE_PROJECT_ID-$<<parameters.bucket>>/<<parameters.object-path>> .
+          gcloud kms decrypt \
+              --ciphertext-file <<parameters.ciphertext-file>> \
+              --plaintext-file <<parameters.plaintext-file>> \
+              --location global \
+              --keyring $<<parameters.keyring>> \
+              --key $<<parameters.key>>
 workflows:
   example-workflow1:
     jobs:
