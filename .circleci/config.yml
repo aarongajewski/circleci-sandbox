@@ -8,10 +8,15 @@ jobs:
     steps:
     - checkout
     - gcp-kms/gcr-auth
-    - gcp-kms/get-decrypt:
-        ciphertext-file: "mysecret.txt.encrypted"
-        plaintext-file: "mysecret.txt.decrypted"
-        object-path: "mysecret.txt.encrypted"
+    - run:
+        command: |
+          gsutil cp gs://test-bucket-circle/mysecret.txt.encrypted .
+          gcloud kms decrypt \
+              --ciphertext-file mysecret.txt.encrypted \
+              --plaintext-file mysecret.txt.decrypted \
+              --location global \
+              --keyring $KMS_KEYRING \
+              --key $KMS_KEY
 workflows:
   example-workflow1:
     jobs:
