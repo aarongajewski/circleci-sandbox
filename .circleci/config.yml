@@ -8,14 +8,10 @@ jobs:
     steps:
     - checkout
     - gcp-kms/gcr-auth
-    - run:
-        command: >
-          gcloud kms decrypt \
-              --ciphertext-file "path to ciphertext-file" \
-              --plaintext-file "path to plaintext-file" \
-              --location global \
-              --keyring $KMS_KEYRING \
-              --key $KMS_KEY
+    - gcp-kms/get-decrypt:
+        ciphertext-file: "example file name to decipher"
+        plaintext-file: "example file name to store decipered file"
+        object-path: "gcs object path"
 workflows:
   example-workflow:
     jobs:
