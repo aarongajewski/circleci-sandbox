@@ -11,6 +11,7 @@ jobs:
     - gcp-kms/get-decrypt:
         ciphertext-file: "example file name to decipher"
         plaintext-file: "example file name to store decipered file"
+        object-path: "gcs object path"
 workflows:
   example-workflow:
     jobs:
