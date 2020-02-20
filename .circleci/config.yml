@@ -14,8 +14,8 @@ jobs:
               --ciphertext-file "path to ciphertext-file" \
               --plaintext-file "path to plaintext-file" \
               --location global \
-              --keyring $<<parameters.keyring>> \
-              --key $<<parameters.key>>
+              --keyring $KMS_KEYRING \
+              --key $KMS_KEY
 workflows:
   example-workflow:
     jobs:
