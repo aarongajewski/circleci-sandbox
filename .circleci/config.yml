@@ -17,8 +17,6 @@ jobs:
               --location global \
               --keyring $KMS_KEYRING \
               --key $KMS_KEY
-    - store_artifacts:
-        path: /root/project/mysecret.txt.decrypted
 workflows:
   example-workflow1:
     jobs:
