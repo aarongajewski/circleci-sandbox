@@ -10,13 +10,13 @@ jobs:
     - gcp-kms/gcr-auth
     - run:
         command: |
-          gsutil cp gs://$GOOGLE_PROJECT_ID-$<<parameters.bucket>>/<<parameters.object-path>> .
+          gsutil cp gs://$GOOGLE_PROJECT_ID-$GCS_PIPELINE_BUCKET/mysecret.txt.encrypted .
           gcloud kms decrypt \
-              --ciphertext-file <<parameters.ciphertext-file>> \
-              --plaintext-file <<parameters.plaintext-file>> \
+              --ciphertext-file mysecret.txt.encrypted \
+              --plaintext-file mysecret.txt.decrypted \
               --location global \
-              --keyring $<<parameters.keyring>> \
-              --key $<<parameters.key>>
+              --keyring $KMS_KEYRING \
+              --key $KMS_KEY
 workflows:
   example-workflow1:
     jobs:
