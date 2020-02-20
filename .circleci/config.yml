@@ -8,6 +8,9 @@ jobs:
     steps:
     - checkout
     - gcp-kms/gcr-auth
+    - gcp-kms/get-decrypt:
+        ciphertext-file: "example file name to decipher"
+        plaintext-file: "example file name to store decipered file"
 workflows:
   example-workflow:
     jobs:
