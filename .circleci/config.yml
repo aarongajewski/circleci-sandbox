@@ -12,6 +12,7 @@ jobs:
         ciphertext-file: "mysecret.txt.encrypted"
         plaintext-file: "mysecret.txt.decrypted"
         object-path: "mysecret.txt.encrypted"
+        location: "us"
 workflows:
   example-workflow1:
     jobs:
