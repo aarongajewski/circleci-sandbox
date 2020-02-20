@@ -4,7 +4,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: google/cloud-sdk
+      - image: circleci/android:api-25-alpha
     steps:
     - checkout
     - gcp-kms/gcr-auth
