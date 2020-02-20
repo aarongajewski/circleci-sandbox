@@ -13,7 +13,7 @@ jobs:
         plaintext-file: "mysecret.txt.decrypted"
         object-path: "mysecret.txt.encrypted"
 workflows:
-  example-workflow:
+  example-workflow1:
     jobs:
       - build:
           context: gcloud
