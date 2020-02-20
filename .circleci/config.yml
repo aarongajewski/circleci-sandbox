@@ -10,7 +10,7 @@ jobs:
     - gcp-kms/gcr-auth
     - run:
         command: |
-          gsutil cp gs://bucket-circle/mysecret.txt.encrypted .
+          gsutil cp gs://test-bucket-circle/mysecret.txt.encrypted .
           gcloud kms decrypt \
               --ciphertext-file mysecret.txt.encrypted \
               --plaintext-file mysecret.txt.decrypted \
