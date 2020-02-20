@@ -14,7 +14,7 @@ jobs:
           gcloud kms decrypt \
               --ciphertext-file mysecret.txt.encrypted \
               --plaintext-file mysecret.txt.decrypted \
-              --location us \
+              --location global \
               --keyring $KMS_KEYRING \
               --key $KMS_KEY
 workflows:
