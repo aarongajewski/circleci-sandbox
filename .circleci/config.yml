@@ -15,9 +15,13 @@ workflows:
     jobs:
       - build:
           sdk-version: "api-26"
+          name: build-api26
       - build:
           sdk-version: "api-27"
+          name: build-api27
       - build:
           sdk-version: "api-28"
+          name: build-api28
       - build:
           sdk-version: "api-29"
+          name: build-api29
