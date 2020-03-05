@@ -1,91 +1,23 @@
-version: 2
+version: 2.1
 jobs:
   build:
+    parameters:
+      sdk-version:
+        description: "Version for android"
+        type: string
     docker:
-      - image: circleci/ruby:2.6-rc
+      - image: circleci/android:<< parameters.sdk-version >>
     steps:
-      - run: mkdir -p workspace
-      - run: echo "Testing Workspaces" > workspace/echo-output
-      - persist_to_workspace:
-          # Must be an absolute path, or relative path from working_directory
-          root: workspace
-          # Must be relative path from root
-          paths:
-            - echo-output    
-  test1:
-    docker:
-      - image: circleci/ruby:2.6-rc
-    steps:
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: workspace
-
-      - run: cat workspace/echo-output
-  test2:
-    docker:
-      - image: circleci/ruby:2.6-rc
-    steps:
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: workspace
-
-      - run: |
-          if [[ $(cat workspace/echo-output) == "Testing Workspaces" ]]; then
-            echo "It worked!";
-          else
-            echo "Nope!"; exit 1
-          fi   
-
-  deploy:
-    docker:
-      - image: circleci/ruby:2.6-rc
-    steps:
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: workspace
-
-      - run: |
-          echo "Deploying message!"
-          cat workspace/echo-output
-          
-  job-to-connect-to-nexus:
-    machine:
-        true 
-    steps:
-      - run: go version
-#      - persist_to_workspace:
-#          # Must be an absolute path, or relative path from working_directory
-#          root: workspace
-#          # Must be relative path from root
-#          paths:
-#            - echo-output  
-  job-for-downstream-tasks:
-    docker:
-      - image: circleci/ruby:2.6-rc
-    steps:
-      - run: echo "grab resources from workspace, do stuff"
-          
+      - checkout
+      
 workflows:
-  version: 2
-  build_and_test:
+  my-workflow:
     jobs:
-       - job-to-connect-to-nexus
-#      - build
-#      - hold:
-#          type: approval
-#          requires:
-#           - build
-#      - test1:
-#          requires:
-#            - hold
-#      - test2:
-#          requires:
-#            - hold
-#      - hold2:
-#          type: approval
-#          requires:
-#           - test1
-#           - test2
-#      - deploy:
-#          requires:
-#            - hold2
+      - build:
+          sdk-version: "api-26"
+      - build:
+          sdk-version: "api-27"
+      - build:
+          sdk-version: "api-28"
+      - build:
+          sdk-version: "api-29"
