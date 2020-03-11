@@ -1,51 +1,69 @@
-version: 2
+version: 2.1
 jobs:
-  build:
-    working_directory: ~/mern-starter
-    # The primary container is an instance of the first image listed. The job's commands run in this container.
+  build: 
     docker:
-      - image: circleci/node:jessie
-    # The secondary container is an instance of the second listed image which is run in a common network where ports exposed on the primary container are available on localhost.
-      - image: mongo:jessie
+      - image: circleci/node:11.10.1-browsers 
     steps:
       - checkout
-      - run:
-          name: Update npm
-          command: 'sudo npm install -g npm@latest'
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-      - run:
-          name: Install npm wee
-          command: npm install
-      - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-          paths:
-            - node_modules
-  test:
+      - run: echo "Build Job"
+  unit-test:
     docker:
-      - image: circleci/node:jessie
-      - image: mongo:jessie
+      - image: circleci/node:11.10.1-browsers
     steps:
       - checkout
-      - run:
-          name: Test
-          command: npm test
-      - run:
-          name: Generate code coverage
-          command: './node_modules/.bin/nyc report --reporter=text-lcov'
-      - store_artifacts:
-          path: test-results.xml
-      - store_artifacts:
-          path: coverage
-
+      - run: echo "Unit Test Job"
+  spotless:
+    docker:
+      - image: circleci/node:11.10.1-browsers
+    steps:
+      - checkout
+      - run: echo "Spotless Job"   
+  sonarqube:
+    docker:
+      - image: circleci/node:11.10.1-browsers
+    steps:
+      - checkout
+      - run: |
+            if [ "$CIRCLE_BRANCH" = "develop" ]; then
+                circleci-agent step halt
+            fi
+      - run: echo "Run SonarQube"
+  deploy-to-qa:
+    docker:
+      - image: circleci/node:11.10.1-browsers
+    steps:
+      - checkout
+      - run: echo "Deploy to QA"
+  deploy-to-prod:
+    docker:
+      - image: circleci/node:11.10.1-browsers
+    steps:
+      - checkout
+      - run: echo "Deploy to Production"
 workflows:
   version: 2
-  build_and_test:
+  sample-workflow:
     jobs:
-      - build
-      - test:
+      - build       
+      - unit-test:     
           requires:
             - build
+      - spotless:     
+          requires:
+            - build
+      - sonarqube:     
+          requires:
+            - unit-test
+            - spotless
+      - deploy-to-qa:
           filters:
             branches:
-              only: master
+              only: qa      
+          requires:
+            - sonarqube
+      - deploy-to-prod:
+          filters:
+            branches:
+              only: master     
+          requires:
+            - sonarqube            
