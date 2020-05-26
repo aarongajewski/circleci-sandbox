@@ -1,24 +1,15 @@
 version: 2.1
-orbs:
-  gcp-kms: carecloud/gcp-kms@0.0.1
 jobs:
   build:
     docker:
       - image: circleci/android:api-25-alpha
     steps:
     - checkout
-    - gcp-kms/gcr-auth
     - run:
         command: |
-          gsutil cp gs://$GCS_PIPELINE_BUCKET/mysecret.txt.encrypted .
-          gcloud kms decrypt \
-              --ciphertext-file mysecret.txt.encrypted \
-              --plaintext-file mysecret.txt.decrypted \
-              --location global \
-              --keyring $KMS_KEYRING \
-              --key $KMS_KEY
+          cat /sys/fs/cgroup/memory/memory.usage_in_bytes  | awk '{ byte =$1 /1024/1024/1024; print byte " GB" }'
+          
 workflows:
   example-workflow1:
     jobs:
-      - build:
-          context: gcloud
+      - build
